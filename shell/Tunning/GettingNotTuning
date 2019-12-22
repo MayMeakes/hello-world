@@ -1,0 +1,274 @@
+#1.redo大量产生必然是由于大量产生"块该表"。从AWR视图中找出"块该表"最多的segments
+select * from (
+	select to_char(begin_interval_time,'YYYY_MMM_DD HH24:MI') snap_time,
+		   ddsso.object_name,
+		   sum(db_block_change_delta)
+		from dba_hist_seg_stat		dhss,
+			 dba_hist_seg_stat_obj  dhsso,
+			 dba_hist_snapshot 		dhs
+		where dhs.snap_id=dhsso.snap_id
+		and dhs.instance_number=dhss.instance_number
+		and dhss.obj# =dhsso.dataobj#
+		and begin_interval_time >sysdate - 60/1440
+	group by to_char(begin_interval_time,'YYYY_MMM_DD HH24:MI'),dhsso.object_name
+	order by 3 desc
+)
+where rownum<=5;
+
+--2.从awr视图中找出步骤1中排序考前设计的对象设计的SQL
+select to_char(begin_interval_time,'YYYY_MMM_DD HH24:MI'),
+	   dbms_log.substr(sql_text,4000,1),
+	   dhss.instance_numberd,
+	   dhss.sql_id,
+	   executions_delta,
+	   rows_processed_delta
+from dba_hist_sqlstat dhss,
+	 dba_hist_snapshot dhs,
+	 dba_hist_sqltext dba_hist_seg_stat
+where upper(dhst.sql_text) like '%这里写对象名大写%'
+and   dhss.snap_id=dhs.snap_id
+and	  dhss.instance_number=dhs.instance_number
+and   dhss.sql_id=dhst.sql_id;
+
+--3.从ASH相关视图中找出执行这些SQL的session、module和machine
+select * from dba_hist_active_sesss_history WHERE sql_id='';
+select * from v$active_session_history where sql_id='';
+
+--4.dba_source 看看是否有储存过程包含这个SQL
+#GettingNotTunning.sql
+##########################################################
+#Chapter6 segment block
+
+
+--tablespaceRatio
+select a.tablespace_name "表空间名",
+	   a.total_space "总空间(G)",
+	   NVL(b.free_space,0) "剩余空间(G)",
+	   a.total_space - nvl(b.free_space,0) "使用空间(G)",
+	   case when a.total_space=0 then 0 else trunc(nvl(b.free_space,0)/a.total_space * 100,2) END "剩余百分比"
+from (
+	select tablespace_name,trunc(sum(bytes)/1024/1024/1024,2) total_space
+	from dba_data_files
+	group by tablespace_name
+) a,
+(
+	select tablespace_name,trunc(sum(bytes)/1024/1024/1024,2) free_space
+	from dba_free_space
+	group by tablespace_name
+) b
+where a.tablespace_name=b.tablespace_name(+)
+order by 5;
+
+--queryTableHighwater
+
+
+
+
+
+select num_rows,blocks from dba_tab_statistics where table_name='&tabl';
+ alter table table_name move;
+ alter index index_name rebuild;
+
+##########################################################
+#Chapter7  TableDesign
+
+#partionTableDictionary
+select partioning_type,
+	   subpartitioning_type,
+	   partioning_count
+from user_part_tables
+where table_name='RANGE_PART_TAB';
+
+select column_name,
+	   object_type,
+	   column_position
+from user_part_key_columns
+where name='RANGE_PART_TAB';
+
+select partition_name,
+	   segment_type,
+	   bytes/1024/1024/1024
+from dba_segments
+where segment_name='RANGE_PART_TAB';
+
+--Statistics
+select  table_name,
+		partion_name,
+		last_analyzed,
+		partion_position,
+		num_rows
+from dba_tab_statistics t
+where table_name='RANGE_PART_TAB';
+
+--partitionIndex
+select  table_name,
+		index_name,
+		last_analyzed,
+		blevel,
+		num_rows,
+		leaf_blocks,
+		distinct_keys,
+		status
+from dba_indexes where table_name='RANGE_PART_TAB';
+
+--partitionIndexColumns
+select  index_name,
+		column_name,
+		column_position
+from dba_ind_columns
+where table_name='RANGE_PART_TAB';
+
+--partionIndexBytes
+select segment_name,segment_type,sum(bytes)/1024/1024/1024
+from dba_segments
+where segment_name in
+	(select index_name
+		from user_indexes
+		where table_name='RANGE_PART_TAB')
+group by segment_name,segment_type;
+
+--partionIndexQuota
+select segment_name,
+		partion_name,
+		segment_type,
+		bytes
+from dba_segments
+where segment_name in 
+		(select index_name
+			from dba_indexes
+			where table_name='RANGE_PART_TAB');
+
+--partionIndexInvalid
+select  t2.table_name,
+		t1.inde_name,
+		t1.pration_name,
+		t1.last_analyzed,
+		t1.blevel,
+		t1.num_rows,
+		t1.leaf_blocks,
+		t1.status
+from dba_ind_partitions t1,dba_indexes t2
+where t1.index_name=t2.index_name
+and t2.table_name='RANGE_PART_TAB';
+
+
+#globalTempTable
+create global temporary table T_TMP_session on commit preserve rows as select * from dba_objects where 1=2;
+
+select table_name,temporary,duration from dba_tables where table_name='T_TMP_session';
+
+create global temporary table T_TMP_transaction on commit delete rows as 
+	select * from dba_objects where 1=2;
+
+#monitorIndexInvalid
+prompt <p>查询失效普通索引
+select t.index_name,
+		t.table_name,
+		blevel,
+		t.num_rows,
+		t.leaf_blocks,
+		T.distinct_keys
+	from dba_indexes t
+where status='INVALID';
+
+select t1.blevel,
+		t1.leaf_blocks,
+		t1.index_name,
+		t2.table_name,
+		t1.partition_name,
+		t1.status
+	from dba_ind_partitions t1,dba_indexes t2
+where t1.inde_name=t2.index_name
+and t1.status='UNUSABLE';
+
+#monitorTableUnpartition
+select segment_name,
+		segment_type,
+		sum(bytes)/1024/1024/1024 object_size
+from dba_segments
+where segment_type='TABLE'
+group by segment_name,segment_type
+having sum(bytes)/1024/1024/1024 >= 10
+order by object_size desc;
+
+
+#monitorPartitionTableUneven
+set lines 266
+col table_name for a20
+select table_name,
+		max(num_rows),
+		trunc(avg(num_rows),0),
+		sum(num_rows),
+		case when sum(num_rows),0 then 0,else trunc(max(num_rows)/sum(num_rows),2) end,
+count(*)
+from dba_tab_partitions
+group by table_name
+having max(num_rows)/sum(num_rows)>2/count(*);
+
+#monitorSubPartitions
+select table_name,
+		partitioning_type,
+		subpartitioning_type,
+		partition_count
+from dba_part_tables
+where subpartitioning_type<>'NONE';
+
+select count(*) from user_part_tables where subpartitioning_type<>'NONE';
+
+#monitorTempStatistic
+select owner,
+		table_name,
+		t.last_analyzed,
+		t.num_rows,
+		t.blocks
+from dba_tables
+where t.temporary='Y'
+and last_analyzed is not null;
+
+#monitorTableNoindexFkey
+select  table_name,
+		constraint_name,
+		cname1 || nvl2(cname2,','||cname2,null) ||
+		nvl2(cname3,','|| cname3,null)||
+		nvl2(cname4,','|| cname4,null)||
+		nvl2(cname5,','|| cname5,null)||
+		nvl2(cname6,','|| cname6,null)||
+		nvl2(cname7,','|| cname7,null)||
+		nvl2(cname8,','|| cname8,null) columns 
+from (select b.table_name
+			 b.constraint_name,
+			 max(decode(position,1,column_name,null)) cname1,
+			 max(decode(position,2,column_name,null)) cname1,
+			 max(decode(position,3,column_name,null)) cname1,
+			 max(decode(position,4,column_name,null)) cname1,
+			 max(decode(position,5,column_name,null)) cname1,
+			 max(decode(position,6,column_name,null)) cname1,
+			 max(decode(position,7,column_name,null)) cname1,
+			 max(decode(position,8,column_name,null)) cname1,
+			 count(*) col_cnt
+			 from (select substr(table_name,1,30) table_name,
+			 		      substr(constraint_name,1,30) constraint_name,
+			 		      substr(column_name,1,30) column_name,
+			 		      position
+			 		from dba_cons_columns) a,
+			      dba_constraints b
+			 where a.constraint_name=b.constraint_name
+			 and b.constraint_type='R'
+		     group by b.table_name,b.constraint_name) cons
+where col_cnt > ALL;
+
+#queryTableFK
+select count(*),table_name,c_constraint_name from (
+	select a.table_name,
+			substr(a.constraint_name,1,30) c_constraint_name,
+			substr(a.column_name,1,30) column_name,
+			position,
+			b.owner,
+			b.constraint_name,
+			b.constraint_type
+		from dba_cons_columns a,dba_constraints b
+	where a.constraint_name=b.constraint_name
+	and b.constraint_type='R')
+group by table_name,c_constraint_name;
+		
+#

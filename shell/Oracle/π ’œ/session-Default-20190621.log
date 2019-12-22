@@ -1,0 +1,937 @@
+﻿[21:06:15][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/oifcfg  getif
+[21:06:15]bond0  10.197.103.0  global  public
+[21:06:15]bond1  10.190.98.0  global  cluster_interconnect
+[21:06:52][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/oifcfg delif -global bond0/10.197.103.0
+[21:07:02][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/oifcfg setif -global bond0/10.197.108.0:public
+[21:07:19][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/oifcfg  getif
+[21:07:19]bond1  10.190.98.0  global  cluster_interconnect
+[21:07:19]bond0  10.197.108.0  global  public
+[21:07:35][root@sxzcgldb103021 ~]# su - grid
+[21:07:35]Last login: Fri Jun 21 20:04:34 CST 2019 on pts/13
+[21:07:36][grid@sxzcgldb103021 ~]$ srvctl config nodeapps -a
+[21:07:37]Network exists: 1/10.197.103.0/255.255.255.0/bond0, type static
+[21:07:37]VIP exists: /sxzcgldb103021-vip/10.197.103.23/10.197.103.0/255.255.255.0/bond0, hosting node sxzcgldb103021
+[21:07:38]VIP exists: /sxzcgldb103022-vip/10.197.103.24/10.197.103.0/255.255.255.0/bond0, hosting node sxzcgldb103022
+[21:07:57][grid@sxzcgldb103021 ~]$ /u01/app/grid/grid_home/bin/srvctl stop vip -n sxzcgldb103021 -f
+[21:08:07][grid@sxzcgldb103021 ~]$ /u01/app/grid/grid_home/bin/srvctl stop vip -n sxzcgldb103022 -f
+[21:08:14][grid@sxzcgldb103021 ~]$ crsctl stat res -t
+[21:08:14]--------------------------------------------------------------------------------
+[21:08:14]NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+[21:08:14]--------------------------------------------------------------------------------
+[21:08:14]Local Resources
+[21:08:14]--------------------------------------------------------------------------------
+[21:08:14]ora.FMFAP_ARCH.dg
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:08:14]ora.FMFAP_DATA01.dg
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:08:14]ora.LISTENER.lsnr
+[21:08:14]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:08:14]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:08:14]ora.OCR.dg
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:08:14]ora.asm
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103021           Started             
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103022           Started             
+[21:08:14]ora.gsd
+[21:08:14]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:08:14]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:08:14]ora.net1.network
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:08:14]ora.ons
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:08:14]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:08:14]--------------------------------------------------------------------------------
+[21:08:14]Cluster Resources
+[21:08:14]--------------------------------------------------------------------------------
+[21:08:14]ora.LISTENER_SCAN1.lsnr
+[21:08:14]      1        ONLINE  ONLINE       sxzcgldb103022                               
+[21:08:14]ora.cvu
+[21:08:14]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:08:14]ora.fmfapdb.db
+[21:08:14]      1        OFFLINE OFFLINE                               Instance Shutdown   
+[21:08:14]      2        OFFLINE OFFLINE                               Instance Shutdown   
+[21:08:14]ora.fmfapdb1.db
+[21:08:14]      1        OFFLINE OFFLINE                                                   
+[21:08:14]ora.oc4j
+[21:08:14]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:08:14]ora.scan1.vip
+[21:08:14]      1        ONLINE  ONLINE       sxzcgldb103022                               
+[21:08:14]ora.sxzcgldb103021.vip
+[21:08:14]      1        OFFLINE OFFLINE                                                   
+[21:08:14]ora.sxzcgldb103022.vip
+[21:08:14]      1        OFFLINE OFFLINE                                                   
+[21:08:44][grid@sxzcgldb103021 ~]$ logout
+[21:08:46][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl modify nodeapps -n sxzcgldb103021 -A 10.197.108.203/255.255.255.0/bond0
+[21:09:20][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl config nodeapps -a
+[21:09:21]Network exists: 1/10.197.108.0/255.255.255.0/bond0, type static
+[21:09:21]VIP exists: /10.197.108.203/10.197.108.203/10.197.108.0/255.255.255.0/bond0, hosting node sxzcgldb103021
+[21:09:21]VIP exists: /10.197.108.204/10.197.108.204/10.197.108.0/255.255.255.0/bond0, hosting node sxzcgldb103022
+[21:09:33][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl config scan
+[21:09:33]SCAN name: sxzcgldb-scan, Network: 1/10.197.108.0/255.255.255.0/bond0
+[21:09:33]SCAN VIP name: scan1, IP: /sxzcgldb-scan/10.197.103.25
+[21:10:02][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl stop scan_listener
+[21:10:09][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl stop scan
+[21:10:18][root@sxzcgldb103021 ~]# crsctl stat res -t
+[21:10:18]-bash: crsctl: command not found
+[21:10:24][root@sxzcgldb103021 ~]# su - grid
+[21:10:24]Last login: Fri Jun 21 21:07:35 CST 2019 on pts/5
+[21:10:28][grid@sxzcgldb103021 ~]$ crsctl stat res -t
+[21:10:28]--------------------------------------------------------------------------------
+[21:10:28]NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+[21:10:28]--------------------------------------------------------------------------------
+[21:10:28]Local Resources
+[21:10:28]--------------------------------------------------------------------------------
+[21:10:28]ora.FMFAP_ARCH.dg
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:10:28]ora.FMFAP_DATA01.dg
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:10:28]ora.LISTENER.lsnr
+[21:10:28]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:10:28]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:10:28]ora.OCR.dg
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:10:28]ora.asm
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103021           Started             
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103022           Started             
+[21:10:28]ora.gsd
+[21:10:28]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:10:28]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:10:28]ora.net1.network
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:10:28]ora.ons
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:10:28]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:10:28]--------------------------------------------------------------------------------
+[21:10:28]Cluster Resources
+[21:10:28]--------------------------------------------------------------------------------
+[21:10:28]ora.LISTENER_SCAN1.lsnr
+[21:10:28]      1        OFFLINE OFFLINE                                                   
+[21:10:28]ora.cvu
+[21:10:28]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:10:28]ora.fmfapdb.db
+[21:10:28]      1        OFFLINE OFFLINE                               Instance Shutdown   
+[21:10:28]      2        OFFLINE OFFLINE                               Instance Shutdown   
+[21:10:28]ora.fmfapdb1.db
+[21:10:28]      1        OFFLINE OFFLINE                                                   
+[21:10:28]ora.oc4j
+[21:10:28]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:10:28]ora.scan1.vip
+[21:10:28]      1        OFFLINE OFFLINE                                                   
+[21:10:28]ora.sxzcgldb103021.vip
+[21:10:28]      1        OFFLINE OFFLINE                                                   
+[21:10:28]ora.sxzcgldb103022.vip
+[21:10:28]      1        OFFLINE OFFLINE                                                   
+[21:10:56][grid@sxzcgldb103021 ~]$ logout
+[21:10:57][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl  modify scan -n sxzcgldb-scan
+[21:11:04][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl config scan
+[21:11:05]SCAN name: sxzcgldb-scan, Network: 1/10.197.108.0/255.255.255.0/bond0
+[21:11:05]SCAN VIP name: scan1, IP: /sxzcgldb-scan/10.197.103.25
+[21:12:29][root@sxzcgldb103021 ~]# vi /etc/hosts
+[21:12:29]127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+[21:12:29]::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+[21:12:29]10.197.103.21    sxzcgldb103021
+[21:12:29]10.197.103.22    sxzcgldb103022
+[21:12:29]10.197.103.23    sxzcgldb103021-vip
+[21:12:29]10.197.103.24    sxzcgldb103022-vip
+[21:12:29]10.190.98.235    sxzcgldb103021-priv
+[21:12:29]10.190.98.236    sxzcgldb103022-priv
+[21:12:29]10.197.103.25    sxzcgldb-scan
+[21:12:29]#NBU Master
+[21:12:29]10.197.179.71   hqjzbf17971
+[21:12:29]10.197.179.72   hqjzbf17972
+[21:12:29]10.197.179.73   MASTERTL4
+[21:12:29]
+[21:12:29]#NBU 5330
+[21:12:29]10.197.179.74   hqtlvrts01
+[21:12:29]10.197.179.75   hqtlvrts02
+[21:12:29]#NBU 5340
+[21:12:29]10.197.179.79   hqtlvrts03
+[21:12:29]10.197.179.80   hqtlvrts04
+[21:12:29]10.197.179.76   hqtlvrts0304
+[21:12:29]10.197.179.81   hqtlvrts05
+[21:12:29]10.197.179.82   hqtlvrts06
+[21:12:29]10.197.179.77   hqtlvrts0506
+[21:12:29]10.197.179.83   hqtlvrts07
+[21:12:29]10.197.179.84   hqtlvrts08
+[21:12:29]10.197.179.78   hqtlvrts0708
+[21:12:30]127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+[21:12:31]::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+[21:12:31]10.197.103.21    sxzcgldb103021
+[21:12:31]10.197.103.22    sxzcgldb103022
+[21:12:31]10.197.103.23    sxzcgldb103021-vip
+[21:12:31]10.197.103.24    sxzcgldb103022-vip
+[21:12:31]10.190.98.235    sxzcgldb103021-priv
+[21:12:31]10.190.98.236    sxzcgldb103022-priv
+[21:12:31]10.197.103.25    sxzcgldb-scan
+[21:12:31]#NBU Master
+[21:12:32]10.197.179.71   hqjzbf17971
+[21:12:34]10.190.98.236    sxzcgldb103022-priv
+[21:12:50]~                                                                                                                                                               
+[21:12:55]"/etc/hosts" 29L, 850C written
+[21:13:40][root@sxzcgldb103021 ~]# cat /etc/hosts
+[21:13:40]127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+[21:13:40]::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+[21:13:40]10.197.103.21    sxzcgldb103021
+[21:13:40]10.197.103.22    sxzcgldb103022
+[21:13:40]10.197.103.23    sxzcgldb103021-vip
+[21:13:40]10.197.103.24    sxzcgldb103022-vip
+[21:13:40]10.190.98.235    sxzcgldb103021-priv
+[21:13:40]10.190.98.236    sxzcgldb103022-priv
+[21:13:40]#10.197.103.25    sxzcgldb-scan
+[21:13:40]
+[21:13:40]10.197.108.205   sxzcgldb-scan
+[21:13:40]#NBU Master
+[21:13:40]10.197.179.71   hqjzbf17971
+[21:13:40]10.197.179.72   hqjzbf17972
+[21:13:40]10.197.179.73   MASTERTL4
+[21:13:40]
+[21:13:40]#NBU 5330
+[21:13:40]10.197.179.74   hqtlvrts01
+[21:13:40]10.197.179.75   hqtlvrts02
+[21:13:40]#NBU 5340
+[21:13:40]10.197.179.79   hqtlvrts03
+[21:13:40]10.197.179.80   hqtlvrts04
+[21:13:40]10.197.179.76   hqtlvrts0304
+[21:13:40]10.197.179.81   hqtlvrts05
+[21:13:40]10.197.179.82   hqtlvrts06
+[21:13:40]10.197.179.77   hqtlvrts0506
+[21:13:40]10.197.179.83   hqtlvrts07
+[21:13:40]10.197.179.84   hqtlvrts08
+[21:13:40]10.197.179.78   hqtlvrts0708
+[21:14:14][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl  modify scan -n sxzcgldb-scan
+[21:14:23][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/srvctl config scan
+[21:14:24]SCAN name: sxzcgldb-scan, Network: 1/10.197.108.0/255.255.255.0/bond0
+[21:14:24]SCAN VIP name: scan1, IP: /sxzcgldb-scan/10.197.108.205
+[21:15:38][root@sxzcgldb103021 ~]# /u01/app/grid/grid_home/bin/crsctl stop crs
+[21:15:38]CRS-2791: Starting shutdown of Oracle High Availability Services-managed resources on 'sxzcgldb103021'
+[21:15:38]CRS-2673: Attempting to stop 'ora.crsd' on 'sxzcgldb103021'
+[21:15:38]CRS-2790: Starting shutdown of Cluster Ready Services-managed resources on 'sxzcgldb103021'
+[21:15:38]CRS-2673: Attempting to stop 'ora.cvu' on 'sxzcgldb103021'
+[21:15:38]CRS-2673: Attempting to stop 'ora.OCR.dg' on 'sxzcgldb103021'
+[21:15:38]CRS-2673: Attempting to stop 'ora.FMFAP_ARCH.dg' on 'sxzcgldb103021'
+[21:15:38]CRS-2673: Attempting to stop 'ora.FMFAP_DATA01.dg' on 'sxzcgldb103021'
+[21:15:38]CRS-2673: Attempting to stop 'ora.oc4j' on 'sxzcgldb103021'
+[21:15:39]CRS-2677: Stop of 'ora.cvu' on 'sxzcgldb103021' succeeded
+[21:15:39]CRS-2672: Attempting to start 'ora.cvu' on 'sxzcgldb103022'
+[21:15:39]CRS-2677: Stop of 'ora.FMFAP_DATA01.dg' on 'sxzcgldb103021' succeeded
+[21:15:39]CRS-2676: Start of 'ora.cvu' on 'sxzcgldb103022' succeeded
+[21:15:39]CRS-2677: Stop of 'ora.FMFAP_ARCH.dg' on 'sxzcgldb103021' succeeded
+[21:15:42]CRS-2677: Stop of 'ora.oc4j' on 'sxzcgldb103021' succeeded
+[21:15:42]CRS-2672: Attempting to start 'ora.oc4j' on 'sxzcgldb103022'
+[21:15:49]CRS-2677: Stop of 'ora.OCR.dg' on 'sxzcgldb103021' succeeded
+[21:15:49]CRS-2673: Attempting to stop 'ora.asm' on 'sxzcgldb103021'
+[21:15:49]CRS-2677: Stop of 'ora.asm' on 'sxzcgldb103021' succeeded
+[21:15:59]CRS-2676: Start of 'ora.oc4j' on 'sxzcgldb103022' succeeded
+[21:15:59]CRS-2673: Attempting to stop 'ora.ons' on 'sxzcgldb103021'
+[21:15:59]CRS-2677: Stop of 'ora.ons' on 'sxzcgldb103021' succeeded
+[21:15:59]CRS-2673: Attempting to stop 'ora.net1.network' on 'sxzcgldb103021'
+[21:15:59]CRS-2677: Stop of 'ora.net1.network' on 'sxzcgldb103021' succeeded
+[21:15:59]CRS-2792: Shutdown of Cluster Ready Services-managed resources on 'sxzcgldb103021' has completed
+[21:16:00]CRS-2677: Stop of 'ora.crsd' on 'sxzcgldb103021' succeeded
+[21:16:00]CRS-2673: Attempting to stop 'ora.mdnsd' on 'sxzcgldb103021'
+[21:16:00]CRS-2673: Attempting to stop 'ora.crf' on 'sxzcgldb103021'
+[21:16:00]CRS-2673: Attempting to stop 'ora.ctssd' on 'sxzcgldb103021'
+[21:16:00]CRS-2673: Attempting to stop 'ora.evmd' on 'sxzcgldb103021'
+[21:16:00]CRS-2673: Attempting to stop 'ora.asm' on 'sxzcgldb103021'
+[21:16:02]CRS-2677: Stop of 'ora.ctssd' on 'sxzcgldb103021' succeeded
+[21:16:02]CRS-2677: Stop of 'ora.evmd' on 'sxzcgldb103021' succeeded
+[21:16:03]CRS-2677: Stop of 'ora.mdnsd' on 'sxzcgldb103021' succeeded
+[21:16:09]CRS-2677: Stop of 'ora.asm' on 'sxzcgldb103021' succeeded
+[21:16:09]CRS-2673: Attempting to stop 'ora.cluster_interconnect.haip' on 'sxzcgldb103021'
+[21:16:10]CRS-2677: Stop of 'ora.cluster_interconnect.haip' on 'sxzcgldb103021' succeeded
+[21:16:10]CRS-2673: Attempting to stop 'ora.cssd' on 'sxzcgldb103021'
+[21:16:11]CRS-2677: Stop of 'ora.cssd' on 'sxzcgldb103021' succeeded
+[21:16:41]
+[21:16:49]CRS-2677: Stop of 'ora.crf' on 'sxzcgldb103021' succeeded
+[21:16:49]CRS-2673: Attempting to stop 'ora.gipcd' on 'sxzcgldb103021'
+[21:16:50]CRS-2677: Stop of 'ora.gipcd' on 'sxzcgldb103021' succeeded
+[21:16:50]CRS-2673: Attempting to stop 'ora.gpnpd' on 'sxzcgldb103021'
+[21:16:51]CRS-2677: Stop of 'ora.gpnpd' on 'sxzcgldb103021' succeeded
+[21:16:51]CRS-2793: Shutdown of Oracle High Availability Services-managed resources on 'sxzcgldb103021' has completed
+[21:16:52]CRS-4133: Oracle High Availability Services has been stopped.
+[21:16:52][root@sxzcgldb103021 ~]# 
+[21:18:52][root@sxzcgldb103021 ~]# timed out waiting for input: auto-logout
+[21:19:35][jtoper01@sxzcgldb103021 ~]$ su -
+[21:19:44]Password: 
+[21:19:44]Last login: Fri Jun 21 21:04:17 CST 2019 on pts/5
+[21:19:45]
+[21:19:45]               #################################################
+[21:19:45]               #                                               #
+[21:19:45]               #   You are [ROOT], Keep clam and be careful!   #
+[21:19:45]               #                                               #
+[21:19:45]               #################################################
+[21:19:45]
+[21:19:48][root@sxzcgldb103021 ~]# export TMOUT=0
+[21:20:23][root@sxzcgldb103021 ~]# cd /etc/sysconfig/network-scripts/
+[21:20:24][root@sxzcgldb103021 network-scripts]# ls
+[21:20:24]ifcfg-bond0  ifcfg-eth1  ifcfg-eth9   ifdown-eth   ifdown-post    ifdown-Team      ifup-aliases  ifup-ipv6   ifup-post    ifup-Team      init.ipv6-global
+[21:20:24]ifcfg-bond1  ifcfg-eth5  ifcfg-lo     ifdown-ippp  ifdown-ppp     ifdown-TeamPort  ifup-bnep     ifup-isdn   ifup-ppp     ifup-TeamPort  network-functions
+[21:20:24]ifcfg-bond2  ifcfg-eth6  ifdown       ifdown-ipv6  ifdown-routes  ifdown-tunnel    ifup-eth      ifup-plip   ifup-routes  ifup-tunnel    network-functions-ipv6
+[21:20:24]ifcfg-eth0   ifcfg-eth7  ifdown-bnep  ifdown-isdn  ifdown-sit     ifup             ifup-ippp     ifup-plusb  ifup-sit     ifup-wireless
+[21:20:38][root@sxzcgldb103021 network-scripts]# vi /etc/sysconfig/network-scripts/ifcfg-bond0
+[21:20:38]DEVICE=bond0
+[21:20:38]TYPE=Ethernet
+[21:20:38]ONBOOT=yes
+[21:20:38]BOOTPROTO=none
+[21:20:38]NM_CONTROLLED=no
+[21:20:38]IPADDR=10.197.103.21
+[21:20:38]NETMASK=255.255.255.0
+[21:20:38]GATEWAY=10.197.103.254
+[21:20:38]BONDING_OPTS="mode=1 miimon=100"
+[21:20:43]DEVICE=bond0
+[21:20:43]TYPE=Ethernet
+[21:20:43]ONBOOT=yes
+[21:20:43]BOOTPROTO=none
+[21:20:44]NM_CONTROLLED=no
+[21:20:44]IPADDR=10.197.103.21
+[21:21:16]"ifcfg-bond0" 9L, 170C written
+[21:21:24][root@sxzcgldb103021 network-scripts]# systemctl restart network
+[21:21:46][root@sxzcgldb103021 network-scripts]# ifconfig -a
+[21:21:46]bond0: flags=5187<UP,BROADCAST,RUNNING,MASTER,MULTICAST>  mtu 1500
+[21:21:46]        inet 10.197.108.201  netmask 255.255.255.0  broadcast 10.197.108.255
+[21:21:46]        inet6 fe80::4adf:37ff:fe17:4aad  prefixlen 64  scopeid 0x20<link>
+[21:21:46]        ether 48:df:37:17:4a:ad  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 1437414530  bytes 1187070036886 (1.0 TiB)
+[21:21:46]        RX errors 0  dropped 41  overruns 18  frame 0
+[21:21:46]        TX packets 2377013483  bytes 2604472220944 (2.3 TiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:21:46]bond1: flags=5187<UP,BROADCAST,RUNNING,MASTER,MULTICAST>  mtu 1500
+[21:21:46]        inet 10.190.98.235  netmask 255.255.255.0  broadcast 10.190.98.255
+[21:21:46]        inet6 fe80::4adf:37ff:fe17:4aac  prefixlen 64  scopeid 0x20<link>
+[21:21:46]        ether 48:df:37:17:4a:ac  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 2940679171  bytes 2759350540876 (2.5 TiB)
+[21:21:46]        RX errors 0  dropped 14137738  overruns 0  frame 0
+[21:21:46]        TX packets 2579610964  bytes 2252120816624 (2.0 TiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:21:46]bond2: flags=5187<UP,BROADCAST,RUNNING,MASTER,MULTICAST>  mtu 1500
+[21:21:46]        inet 10.197.180.185  netmask 255.255.255.0  broadcast 10.197.180.255
+[21:21:46]        inet6 fe80::4adf:37ff:fe35:b321  prefixlen 64  scopeid 0x20<link>
+[21:21:46]        ether 48:df:37:35:b3:21  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 735479767  bytes 50211605460 (46.7 GiB)
+[21:21:46]        RX errors 0  dropped 3067  overruns 0  frame 0
+[21:21:46]        TX packets 9862379020  bytes 14914863581357 (13.5 TiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:21:46]eth0: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:17:4a:ac  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 2938949757  bytes 2759245054750 (2.5 TiB)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 2579610962  bytes 2252120816496 (2.0 TiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]        device memory 0x93200000-932fffff  
+[21:21:46]
+[21:21:46]eth1: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:17:4a:ad  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 1436900976  bytes 1187038240675 (1.0 TiB)
+[21:21:46]        RX errors 0  dropped 0  overruns 18  frame 0
+[21:21:46]        TX packets 2376997716  bytes 2604469514378 (2.3 TiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]        device memory 0x93100000-931fffff  
+[21:21:46]
+[21:21:46]eth2: flags=4098<BROADCAST,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:17:4a:ae  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 0  bytes 0 (0.0 B)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 0  bytes 0 (0.0 B)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]        device memory 0x93000000-930fffff  
+[21:21:46]
+[21:21:46]eth3: flags=4098<BROADCAST,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:17:4a:af  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 0  bytes 0 (0.0 B)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 0  bytes 0 (0.0 B)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]        device memory 0x92f00000-92ffffff  
+[21:21:46]
+[21:21:46]eth4: flags=4098<BROADCAST,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:35:b3:20  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 0  bytes 0 (0.0 B)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 0  bytes 0 (0.0 B)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:21:46]eth5: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:35:b3:21  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 734902222  bytes 50169032649 (46.7 GiB)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 9862379018  bytes 14914863581229 (13.5 TiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:21:46]eth6: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:17:4a:ad  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 513557  bytes 31796417 (30.3 MiB)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 15768  bytes 2706676 (2.5 MiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]        device memory 0xac400000-ac4fffff  
+[21:21:46]
+[21:21:46]eth7: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:17:4a:ac  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 1729416  bytes 105486272 (100.5 MiB)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 2  bytes 128 (128.0 B)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]        device memory 0xac300000-ac3fffff  
+[21:21:46]
+[21:21:46]eth8: flags=4098<BROADCAST,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:35:b3:f0  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 0  bytes 0 (0.0 B)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 0  bytes 0 (0.0 B)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:21:46]eth9: flags=6211<UP,BROADCAST,RUNNING,SLAVE,MULTICAST>  mtu 1500
+[21:21:46]        ether 48:df:37:35:b3:21  txqueuelen 1000  (Ethernet)
+[21:21:46]        RX packets 577547  bytes 42572957 (40.6 MiB)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 2  bytes 128 (128.0 B)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:21:46]lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+[21:21:46]        inet 127.0.0.1  netmask 255.0.0.0
+[21:21:46]        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+[21:21:46]        loop  txqueuelen 1  (Local Loopback)
+[21:21:46]        RX packets 6367486533  bytes 74376377354430 (67.6 TiB)
+[21:21:46]        RX errors 0  dropped 0  overruns 0  frame 0
+[21:21:46]        TX packets 6367486533  bytes 74376377354430 (67.6 TiB)
+[21:21:46]        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+[21:21:46]
+[21:25:47][root@sxzcgldb103021 network-scripts]# vi /etc/hosts
+[21:25:47]127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+[21:25:47]::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+[21:25:47]10.197.103.21    sxzcgldb103021
+[21:25:47]10.197.103.22    sxzcgldb103022
+[21:25:47]10.197.103.23    sxzcgldb103021-vip
+[21:25:47]10.197.103.24    sxzcgldb103022-vip
+[21:25:47]10.190.98.235    sxzcgldb103021-priv
+[21:25:47]10.190.98.236    sxzcgldb103022-priv
+[21:25:47]#10.197.103.25    sxzcgldb-scan
+[21:25:47]
+[21:25:47]10.197.108.205   sxzcgldb-scan
+[21:25:47]#NBU Master
+[21:25:47]10.197.179.71   hqjzbf17971
+[21:25:47]10.197.179.72   hqjzbf17972
+[21:25:47]10.197.179.73   MASTERTL4
+[21:25:47]
+[21:25:47]#NBU 5330
+[21:25:47]10.197.179.74   hqtlvrts01
+[21:25:47]10.197.179.75   hqtlvrts02
+[21:25:47]#NBU 5340
+[21:25:47]10.197.179.79   hqtlvrts03
+[21:25:47]10.197.179.80   hqtlvrts04
+[21:25:47]10.197.179.76   hqtlvrts0304
+[21:25:47]10.197.179.81   hqtlvrts05
+[21:25:47]10.197.179.82   hqtlvrts06
+[21:25:47]10.197.179.77   hqtlvrts0506
+[21:25:47]10.197.179.83   hqtlvrts07
+[21:25:47]10.197.179.84   hqtlvrts08
+[21:25:47]10.197.179.78   hqtlvrts0708
+[21:25:48]127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+[21:25:49]::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+[21:25:51]#10.197.103.21    sxzcgldb103021
+[21:25:52]#10.197.103.22    sxzcgldb103022
+[21:25:53]#10.197.103.23    sxzcgldb103021-vip
+[21:25:55]#10.197.103.24    sxzcgldb103022-vip
+[21:25:55]10.190.98.235    sxzcgldb103021-priv
+[21:25:55]10.190.98.236    sxzcgldb103022-priv
+[21:25:55]#10.197.103.25    sxzcgldb-scan
+[21:25:57]10.197.108.201    sxzcgldb103021
+[21:25:57]10.197.108.202    sxzcgldb103022
+[21:25:57]10.197.108.203    sxzcgldb103021-vip
+[21:26:04]"/etc/hosts" 33L, 994C written
+[21:26:09][root@sxzcgldb103021 network-scripts]# cat /etc/hosts
+[21:26:09]127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+[21:26:09]::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+[21:26:09]#10.197.103.21    sxzcgldb103021
+[21:26:09]#10.197.103.22    sxzcgldb103022
+[21:26:09]#10.197.103.23    sxzcgldb103021-vip
+[21:26:09]#10.197.103.24    sxzcgldb103022-vip
+[21:26:09]10.190.98.235    sxzcgldb103021-priv
+[21:26:09]10.190.98.236    sxzcgldb103022-priv
+[21:26:09]#10.197.103.25    sxzcgldb-scan
+[21:26:09]
+[21:26:09]10.197.108.201    sxzcgldb103021
+[21:26:09]10.197.108.202    sxzcgldb103022
+[21:26:09]10.197.108.203    sxzcgldb103021-vip
+[21:26:09]10.197.108.204    sxzcgldb103022-vip
+[21:26:09]10.197.108.205   sxzcgldb-scan
+[21:26:09]#NBU Master
+[21:26:09]10.197.179.71   hqjzbf17971
+[21:26:09]10.197.179.72   hqjzbf17972
+[21:26:09]10.197.179.73   MASTERTL4
+[21:26:09]
+[21:26:09]#NBU 5330
+[21:26:09]10.197.179.74   hqtlvrts01
+[21:26:09]10.197.179.75   hqtlvrts02
+[21:26:09]#NBU 5340
+[21:26:09]10.197.179.79   hqtlvrts03
+[21:26:09]10.197.179.80   hqtlvrts04
+[21:26:09]10.197.179.76   hqtlvrts0304
+[21:26:09]10.197.179.81   hqtlvrts05
+[21:26:09]10.197.179.82   hqtlvrts06
+[21:26:09]10.197.179.77   hqtlvrts0506
+[21:26:09]10.197.179.83   hqtlvrts07
+[21:26:09]10.197.179.84   hqtlvrts08
+[21:26:09]10.197.179.78   hqtlvrts0708
+[21:26:10][root@sxzcgldb103021 network-scripts]# ls
+[21:26:10]ifcfg-bond0  ifcfg-eth1  ifcfg-eth9   ifdown-eth   ifdown-post    ifdown-Team      ifup-aliases  ifup-ipv6   ifup-post    ifup-Team      init.ipv6-global
+[21:26:10]ifcfg-bond1  ifcfg-eth5  ifcfg-lo     ifdown-ippp  ifdown-ppp     ifdown-TeamPort  ifup-bnep     ifup-isdn   ifup-ppp     ifup-TeamPort  network-functions
+[21:26:10]ifcfg-bond2  ifcfg-eth6  ifdown       ifdown-ipv6  ifdown-routes  ifdown-tunnel    ifup-eth      ifup-plip   ifup-routes  ifup-tunnel    network-functions-ipv6
+[21:26:10]ifcfg-eth0   ifcfg-eth7  ifdown-bnep  ifdown-isdn  ifdown-sit     ifup             ifup-ippp     ifup-plusb  ifup-sit     ifup-wireless
+[21:26:17][root@sxzcgldb103021 network-scripts]# ifconfig |grep inet
+[21:26:17]        inet 10.197.108.201  netmask 255.255.255.0  broadcast 10.197.108.255
+[21:26:17]        inet6 fe80::4adf:37ff:fe17:4aad  prefixlen 64  scopeid 0x20<link>
+[21:26:17]        inet 10.190.98.235  netmask 255.255.255.0  broadcast 10.190.98.255
+[21:26:17]        inet6 fe80::4adf:37ff:fe17:4aac  prefixlen 64  scopeid 0x20<link>
+[21:26:17]        inet 10.197.180.185  netmask 255.255.255.0  broadcast 10.197.180.255
+[21:26:17]        inet6 fe80::4adf:37ff:fe35:b321  prefixlen 64  scopeid 0x20<link>
+[21:26:17]        inet 127.0.0.1  netmask 255.0.0.0
+[21:26:17]        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+[21:26:29][root@sxzcgldb103021 network-scripts]# /u01/app/grid/grid_home/bin/crsctl start crs
+[21:26:38]CRS-4123: Oracle High Availability Services has been started.
+[21:26:51][root@sxzcgldb103021 network-scripts]# ps -ef |grep d.bin
+[21:26:51]root      95375      1  3 21:26 ?        00:00:00 /u01/app/grid/grid_home/bin/ohasd.bin reboot
+[21:26:51]grid      95620      1  0 21:26 ?        00:00:00 /u01/app/grid/grid_home/bin/mdnsd.bin
+[21:26:51]grid      95638      1  1 21:26 ?        00:00:00 /u01/app/grid/grid_home/bin/gpnpd.bin
+[21:26:51]grid      95652      1  1 21:26 ?        00:00:00 /u01/app/grid/grid_home/bin/gipcd.bin
+[21:26:51]root      95665      1  4 21:26 ?        00:00:00 /u01/app/grid/grid_home/bin/osysmond.bin
+[21:26:51]grid      95714      1  0 21:26 ?        00:00:00 /u01/app/grid/grid_home/bin/ocssd.bin
+[21:26:51]root      95836  89639  0 21:26 pts/5    00:00:00 grep --color=auto d.bin
+[21:27:17][root@sxzcgldb103021 network-scripts]# crsctl status res -t
+[21:27:17]-bash: crsctl: command not found
+[21:27:25][root@sxzcgldb103021 network-scripts]# /u01/app/grid/grid_home/bin/srvctl start vip -n sxzcgldb103021
+[21:27:26]PRCR-1035 : Failed to look up CRS resource sxzcgldb103021 for ora.cluster_vip.type
+[21:27:26]PRCR-1068 : Failed to query resources
+[21:27:26]Cannot communicate with crsd
+[21:27:45][root@sxzcgldb103021 network-scripts]# su - grid
+[21:27:45]Last login: Fri Jun 21 21:10:24 CST 2019 on pts/5
+[21:28:00][grid@sxzcgldb103021 ~]$ crsctl status res -t
+[21:28:00]--------------------------------------------------------------------------------
+[21:28:00]NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+[21:28:00]--------------------------------------------------------------------------------
+[21:28:00]Local Resources
+[21:28:00]--------------------------------------------------------------------------------
+[21:28:00]ora.FMFAP_ARCH.dg
+[21:28:00]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:00]ora.FMFAP_DATA01.dg
+[21:28:00]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:00]ora.LISTENER.lsnr
+[21:28:00]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:28:00]ora.OCR.dg
+[21:28:00]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:00]ora.asm
+[21:28:00]               ONLINE  ONLINE       sxzcgldb103021           Started             
+[21:28:00]ora.gsd
+[21:28:00]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:28:00]ora.net1.network
+[21:28:00]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:00]ora.ons
+[21:28:00]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:00]--------------------------------------------------------------------------------
+[21:28:00]Cluster Resources
+[21:28:00]--------------------------------------------------------------------------------
+[21:28:00]ora.LISTENER_SCAN1.lsnr
+[21:28:00]      1        OFFLINE OFFLINE                                                   
+[21:28:00]ora.cvu
+[21:28:00]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:00]ora.fmfapdb.db
+[21:28:00]      1        OFFLINE OFFLINE                                                   
+[21:28:00]      2        OFFLINE OFFLINE                               Instance Shutdown   
+[21:28:00]ora.fmfapdb1.db
+[21:28:00]      1        OFFLINE OFFLINE                                                   
+[21:28:00]ora.oc4j
+[21:28:00]      1        ONLINE  OFFLINE                               STARTING            
+[21:28:00]ora.scan1.vip
+[21:28:00]      1        OFFLINE OFFLINE                                                   
+[21:28:00]ora.sxzcgldb103021.vip
+[21:28:00]      1        OFFLINE OFFLINE                                                   
+[21:28:00]ora.sxzcgldb103022.vip
+[21:28:00]      1        OFFLINE OFFLINE                                                   
+[21:28:11][grid@sxzcgldb103021 ~]$ srvctl start vip -n sxzcgldb103021
+[21:28:17][grid@sxzcgldb103021 ~]$ crsctl status res -t              
+[21:28:17]--------------------------------------------------------------------------------
+[21:28:17]NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+[21:28:17]--------------------------------------------------------------------------------
+[21:28:17]Local Resources
+[21:28:17]--------------------------------------------------------------------------------
+[21:28:17]ora.FMFAP_ARCH.dg
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:17]ora.FMFAP_DATA01.dg
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:17]ora.LISTENER.lsnr
+[21:28:17]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:28:17]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:28:17]ora.OCR.dg
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:17]ora.asm
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103021           Started             
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103022           Started             
+[21:28:17]ora.gsd
+[21:28:17]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:28:17]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:28:17]ora.net1.network
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:17]ora.ons
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:17]--------------------------------------------------------------------------------
+[21:28:17]Cluster Resources
+[21:28:17]--------------------------------------------------------------------------------
+[21:28:17]ora.LISTENER_SCAN1.lsnr
+[21:28:17]      1        OFFLINE OFFLINE                                                   
+[21:28:17]ora.cvu
+[21:28:17]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]ora.fmfapdb.db
+[21:28:17]      1        OFFLINE OFFLINE                               Instance Shutdown   
+[21:28:17]      2        OFFLINE OFFLINE                               Instance Shutdown   
+[21:28:17]ora.fmfapdb1.db
+[21:28:17]      1        OFFLINE OFFLINE                                                   
+[21:28:17]ora.oc4j
+[21:28:17]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]ora.scan1.vip
+[21:28:17]      1        OFFLINE OFFLINE                                                   
+[21:28:17]ora.sxzcgldb103021.vip
+[21:28:17]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:17]ora.sxzcgldb103022.vip
+[21:28:17]      1        OFFLINE OFFLINE                                                   
+[21:28:31][grid@sxzcgldb103021 ~]$ /u01/app/grid/grid_home/bin/srvctl start vip -n sxzcgldb103022
+[21:28:37][grid@sxzcgldb103021 ~]$ crsctl status res -t
+[21:28:37]--------------------------------------------------------------------------------
+[21:28:37]NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+[21:28:37]--------------------------------------------------------------------------------
+[21:28:37]Local Resources
+[21:28:37]--------------------------------------------------------------------------------
+[21:28:37]ora.FMFAP_ARCH.dg
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:37]ora.FMFAP_DATA01.dg
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:37]ora.LISTENER.lsnr
+[21:28:37]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:28:37]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:28:37]ora.OCR.dg
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:37]ora.asm
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103021           Started             
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103022           Started             
+[21:28:37]ora.gsd
+[21:28:37]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:28:37]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:28:37]ora.net1.network
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:37]ora.ons
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:37]--------------------------------------------------------------------------------
+[21:28:37]Cluster Resources
+[21:28:37]--------------------------------------------------------------------------------
+[21:28:37]ora.LISTENER_SCAN1.lsnr
+[21:28:37]      1        OFFLINE OFFLINE                                                   
+[21:28:37]ora.cvu
+[21:28:37]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]ora.fmfapdb.db
+[21:28:37]      1        OFFLINE OFFLINE                               Instance Shutdown   
+[21:28:37]      2        OFFLINE OFFLINE                               Instance Shutdown   
+[21:28:37]ora.fmfapdb1.db
+[21:28:37]      1        OFFLINE OFFLINE                                                   
+[21:28:37]ora.oc4j
+[21:28:37]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]ora.scan1.vip
+[21:28:37]      1        OFFLINE OFFLINE                                                   
+[21:28:37]ora.sxzcgldb103021.vip
+[21:28:37]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:28:37]ora.sxzcgldb103022.vip
+[21:28:37]      1        ONLINE  ONLINE       sxzcgldb103022                               
+[21:28:53][grid@sxzcgldb103021 ~]$ ps -ef |grep tns
+[21:28:53]root        735      2  0  2018 ?        00:00:00 [netns]
+[21:28:53]oracle    55158      1  0  2018 ?        00:03:30 /u01/oracle/product/db11gr2/bin/tnslsnr fmfapdb -inherit
+[21:28:53]grid      99406  97853  0 21:28 pts/5    00:00:00 grep --color=auto tns
+[21:29:02][grid@sxzcgldb103021 ~]$ /u01/app/grid/grid_home/bin/srvctl start LISTENER -n sxzcgldb103021
+[21:29:11][grid@sxzcgldb103021 ~]$ ps -ef |grep tns
+[21:29:11]root        735      2  0  2018 ?        00:00:00 [netns]
+[21:29:11]oracle    55158      1  0  2018 ?        00:03:30 /u01/oracle/product/db11gr2/bin/tnslsnr fmfapdb -inherit
+[21:29:11]grid      99591      1  0 21:29 ?        00:00:00 /u01/app/grid/grid_home/bin/tnslsnr LISTENER -inherit
+[21:29:11]grid      99780  97853  0 21:29 pts/5    00:00:00 grep --color=auto tns
+[21:29:15][grid@sxzcgldb103021 ~]$ lsnrctl status LISTENER
+[21:29:15]
+[21:29:15]LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 21-JUN-2019 21:29:15
+[21:29:15]
+[21:29:15]Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+[21:29:15]
+[21:29:15]Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=IPC)(KEY=LISTENER)))
+[21:29:15]STATUS of the LISTENER
+[21:29:15]------------------------
+[21:29:15]Alias                     LISTENER
+[21:29:15]Version                   TNSLSNR for Linux: Version 11.2.0.4.0 - Production
+[21:29:15]Start Date                21-JUN-2019 21:29:02
+[21:29:15]Uptime                    0 days 0 hr. 0 min. 13 sec
+[21:29:15]Trace Level               off
+[21:29:15]Security                  ON: Local OS Authentication
+[21:29:15]SNMP                      OFF
+[21:29:15]Listener Parameter File   /u01/app/grid/grid_home/network/admin/listener.ora
+[21:29:15]Listener Log File         /u01/app/grid/grid_base/diag/tnslsnr/sxzcgldb103021/listener/alert/log.xml
+[21:29:15]Listening Endpoints Summary...
+[21:29:15]  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=LISTENER)))
+[21:29:15]  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.197.108.201)(PORT=19325)))
+[21:29:15]  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.197.108.203)(PORT=19325)))
+[21:29:15]The listener supports no services
+[21:29:15]The command completed successfully
+[21:29:27][grid@sxzcgldb103021 ~]$ /u01/app/grid/grid_home/bin/srvctl start LISTENER -n sxzcgldb103022
+[21:31:10][grid@sxzcgldb103021 ~]$ /u01/app/grid/grid_home/bin/srvctl start scan
+[21:31:49][grid@sxzcgldb103021 ~]$ /u01/app/grid/grid_home/bin/srvctl start scan_listener
+[21:32:01][grid@sxzcgldb103021 ~]$ ps -ef |grep tns
+[21:32:01]root        735      2  0  2018 ?        00:00:00 [netns]
+[21:32:01]oracle    55158      1  0  2018 ?        00:03:30 /u01/oracle/product/db11gr2/bin/tnslsnr fmfapdb -inherit
+[21:32:01]grid      99591      1  0 21:29 ?        00:00:00 /u01/app/grid/grid_home/bin/tnslsnr LISTENER -inherit
+[21:32:01]grid     101926  97853  0 21:32 pts/5    00:00:00 grep --color=auto tns
+[21:32:52][grid@sxzcgldb103021 ~]$ srvctl  start database -d fmfapdb
+[21:33:22][grid@sxzcgldb103021 ~]$ ps -ef | grep smon
+[21:33:22]root      95665      1  5 21:26 ?        00:00:23 /u01/app/grid/grid_home/bin/osysmond.bin
+[21:33:23]grid      97241      1  0 21:27 ?        00:00:00 asm_smon_+ASM1
+[21:33:23]oracle   103589      1  0 21:33 ?        00:00:00 ora_smon_fmfapdb1
+[21:33:23]grid     103975  97853  0 21:33 pts/5    00:00:00 grep --color=auto smon
+[21:33:30][grid@sxzcgldb103021 ~]$ ps -ef | grep pmon | grep -v grep | grep -v ASM | grep pmon | awk '{print $NF}'| awk -F '_' '{print "export ORACLE_SID="$NF}'
+[21:33:30]export ORACLE_SID=fmfapdb1
+[21:33:43][grid@sxzcgldb103021 ~]$ export ORACLE_SID=+ASM1
+[21:33:49][grid@sxzcgldb103021 ~]$ sqlplus / as sysdba
+[21:33:49]
+[21:33:49]SQL*Plus: Release 11.2.0.4.0 Production on Fri Jun 21 21:33:49 2019
+[21:33:49]
+[21:33:49]Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+[21:33:49]
+[21:33:49]
+[21:33:49]Connected to:
+[21:33:49]Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:33:49]With the Real Application Clusters and Automatic Storage Management options
+[21:33:49]
+[21:33:53]SQL> show paramter listener
+[21:33:53]SP2-0158: unknown SHOW option "paramter"
+[21:33:53]SP2-0158: unknown SHOW option "listener"
+[21:33:57]SQL> exig     
+[21:33:57]SP2-0042: unknown command "exig" - rest of line ignored.
+[21:33:59]SQL> exit
+[21:33:59]Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:33:59]With the Real Application Clusters and Automatic Storage Management options
+[21:34:03][grid@sxzcgldb103021 ~]$ sqlplus / as sysasm
+[21:34:03]
+[21:34:03]SQL*Plus: Release 11.2.0.4.0 Production on Fri Jun 21 21:34:03 2019
+[21:34:03]
+[21:34:03]Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+[21:34:03]
+[21:34:03]
+[21:34:03]Connected to:
+[21:34:03]Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:34:03]With the Real Application Clusters and Automatic Storage Management options
+[21:34:03]
+[21:34:11]SQL> show parameter listener
+[21:34:11]
+[21:34:11]NAME                                 TYPE
+[21:34:11]------------------------------------ ---------------------------------
+[21:34:11]VALUE
+[21:34:11]------------------------------
+[21:34:11]listener_networks                    string
+[21:34:11]
+[21:34:11]local_listener                       string
+[21:34:11](DESCRIPTION=(ADDRESS_LIST=(AD
+[21:34:11]DRESS=(PROTOCOL=TCP)(HOST=10.1
+[21:34:11]97.103.23)(PORT=19325))))
+[21:34:11]remote_listener                      string
+[21:34:11]
+[21:37:45]SQL> 
+[21:37:47]SQL> exit
+[21:37:47]Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:37:47]With the Real Application Clusters and Automatic Storage Management options
+[21:37:52][grid@sxzcgldb103021 ~]$ ps -ef |grep smon
+[21:37:52]root      95665      1  5 21:26 ?        00:00:40 /u01/app/grid/grid_home/bin/osysmond.bin
+[21:37:52]grid      97241      1  0 21:27 ?        00:00:00 asm_smon_+ASM1
+[21:37:52]oracle   103589      1  0 21:33 ?        00:00:00 ora_smon_fmfapdb1
+[21:37:52]grid     107861  97853  0 21:37 pts/5    00:00:00 grep --color=auto smon
+[21:37:59][grid@sxzcgldb103021 ~]$ ps -ef |grep tns
+[21:37:59]root        735      2  0  2018 ?        00:00:00 [netns]
+[21:37:59]oracle    55158      1  0  2018 ?        00:03:30 /u01/oracle/product/db11gr2/bin/tnslsnr fmfapdb -inherit
+[21:37:59]grid      99591      1  0 21:29 ?        00:00:00 /u01/app/grid/grid_home/bin/tnslsnr LISTENER -inherit
+[21:37:59]grid     107894  97853  0 21:37 pts/5    00:00:00 grep --color=auto tns
+[21:39:59][grid@sxzcgldb103021 ~]$ timed out waiting for input: auto-logout
+[21:41:28][root@sxzcgldb103021 network-scripts]# su - grid
+[21:41:28]Last login: Fri Jun 21 21:27:45 CST 2019 on pts/5
+[21:41:36][grid@sxzcgldb103021 ~]$ sqlplus / as sysasm
+[21:41:36]
+[21:41:36]SQL*Plus: Release 11.2.0.4.0 Production on Fri Jun 21 21:41:36 2019
+[21:41:36]
+[21:41:36]Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+[21:41:36]
+[21:41:36]
+[21:41:36]Connected to:
+[21:41:36]Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:41:36]With the Real Application Clusters and Automatic Storage Management options
+[21:41:36]
+[21:41:43]SQL> show parameter listener
+[21:41:43]
+[21:41:43]NAME                                 TYPE
+[21:41:43]------------------------------------ ---------------------------------
+[21:41:43]VALUE
+[21:41:43]------------------------------
+[21:41:43]listener_networks                    string
+[21:41:43]
+[21:41:43]local_listener                       string
+[21:41:43](DESCRIPTION=(ADDRESS_LIST=(AD
+[21:41:43]DRESS=(PROTOCOL=TCP)(HOST=10.1
+[21:41:43]97.108.203)(PORT=19325))))
+[21:41:43]remote_listener                      string
+[21:41:43]
+[21:41:43]SQL> 
+[21:41:48]SQL> exit
+[21:41:48]Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:41:48]With the Real Application Clusters and Automatic Storage Management options
+[21:41:51][grid@sxzcgldb103021 ~]$ logout
+[21:41:54][root@sxzcgldb103021 network-scripts]# su - oracle
+[21:41:54]Last login: Fri Jun 21 20:41:22 CST 2019 from sxzcgldb103022-priv on pts/12
+[21:42:03][oracle@sxzcgldb103021 ~]$ sqlplus / as sysdba
+[21:42:03]
+[21:42:03]SQL*Plus: Release 11.2.0.4.0 Production on Fri Jun 21 21:42:03 2019
+[21:42:03]
+[21:42:03]Copyright (c) 1982, 2013, Oracle.  All rights reserved.
+[21:42:03]
+[21:42:03]
+[21:42:03]Connected to:
+[21:42:03]Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:42:03]With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+[21:42:03]Data Mining and Real Application Testing options
+[21:42:03]
+[21:42:04]SQL> select database_role,created,open_mode,name from v$database;
+[21:42:04]
+[21:42:04]DATABASE_ROLE                                    CREATED
+[21:42:04]------------------------------------------------ ------------------
+[21:42:04]OPEN_MODE
+[21:42:04]------------------------------------------------------------
+[21:42:04]NAME
+[21:42:04]---------------------------
+[21:42:04]PHYSICAL STANDBY                                 12-DEC-18
+[21:42:04]READ ONLY
+[21:42:04]FMFAPDB
+[21:42:04]
+[21:42:04]
+[21:42:18]SQL> show parameter listener
+[21:42:18]
+[21:42:18]NAME                                 TYPE
+[21:42:18]------------------------------------ ---------------------------------
+[21:42:18]VALUE
+[21:42:18]------------------------------
+[21:42:18]listener_networks                    string
+[21:42:18]
+[21:42:18]local_listener                       string
+[21:42:18] (ADDRESS=(PROTOCOL=TCP)(HOST=
+[21:42:18]10.197.108.203)(PORT=19325))
+[21:42:18]remote_listener                      string
+[21:42:18]
+[21:42:19]SQL> alter system set local_listener='(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.197.108.203)(PORT=19325))))' scope=both sid='fmfapdb1';^C
+[21:42:31]
+[21:42:59]SQL> exit
+[21:42:59]Disconnected from Oracle Database 11g Enterprise Edition Release 11.2.0.4.0 - 64bit Production
+[21:42:59]With the Partitioning, Real Application Clusters, Automatic Storage Management, OLAP,
+[21:42:59]Data Mining and Real Application Testing options
+[21:43:48][oracle@sxzcgldb103021 ~]$ logout
+[21:43:50][root@sxzcgldb103021 network-scripts]# su - grid
+[21:43:50]Last login: Fri Jun 21 21:41:28 CST 2019 on pts/5
+[21:43:56][grid@sxzcgldb103021 ~]$ lsnrctl status LISTENER
+[21:43:56]
+[21:43:56]LSNRCTL for Linux: Version 11.2.0.4.0 - Production on 21-JUN-2019 21:43:56
+[21:43:56]
+[21:43:56]Copyright (c) 1991, 2013, Oracle.  All rights reserved.
+[21:43:56]
+[21:43:56]Connecting to (DESCRIPTION=(ADDRESS=(PROTOCOL=IPC)(KEY=LISTENER)))
+[21:43:56]STATUS of the LISTENER
+[21:43:56]------------------------
+[21:43:56]Alias                     LISTENER
+[21:43:56]Version                   TNSLSNR for Linux: Version 11.2.0.4.0 - Production
+[21:43:56]Start Date                21-JUN-2019 21:29:02
+[21:43:56]Uptime                    0 days 0 hr. 14 min. 53 sec
+[21:43:56]Trace Level               off
+[21:43:56]Security                  ON: Local OS Authentication
+[21:43:56]SNMP                      OFF
+[21:43:56]Listener Parameter File   /u01/app/grid/grid_home/network/admin/listener.ora
+[21:43:56]Listener Log File         /u01/app/grid/grid_base/diag/tnslsnr/sxzcgldb103021/listener/alert/log.xml
+[21:43:56]Listening Endpoints Summary...
+[21:43:56]  (DESCRIPTION=(ADDRESS=(PROTOCOL=ipc)(KEY=LISTENER)))
+[21:43:56]  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.197.108.201)(PORT=19325)))
+[21:43:56]  (DESCRIPTION=(ADDRESS=(PROTOCOL=tcp)(HOST=10.197.108.203)(PORT=19325)))
+[21:43:56]Services Summary...
+[21:43:56]Service "+ASM" has 1 instance(s).
+[21:43:56]  Instance "+ASM1", status READY, has 1 handler(s) for this service...
+[21:43:56]Service "fmfapdb" has 1 instance(s).
+[21:43:56]  Instance "fmfapdb1", status READY, has 1 handler(s) for this service...
+[21:43:56]Service "fmfapdbXDB" has 1 instance(s).
+[21:43:56]  Instance "fmfapdb1", status READY, has 1 handler(s) for this service...
+[21:43:56]The command completed successfully
+[21:44:12][grid@sxzcgldb103021 ~]$ crsctl stat res -t
+[21:44:12]--------------------------------------------------------------------------------
+[21:44:12]NAME           TARGET  STATE        SERVER                   STATE_DETAILS       
+[21:44:12]--------------------------------------------------------------------------------
+[21:44:12]Local Resources
+[21:44:12]--------------------------------------------------------------------------------
+[21:44:12]ora.FMFAP_ARCH.dg
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]ora.FMFAP_DATA01.dg
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]ora.LISTENER.lsnr
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]ora.OCR.dg
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]ora.asm
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103021           Started             
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103022           Started             
+[21:44:12]ora.gsd
+[21:44:12]               OFFLINE OFFLINE      sxzcgldb103021                               
+[21:44:12]               OFFLINE OFFLINE      sxzcgldb103022                               
+[21:44:12]ora.net1.network
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]ora.ons
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]               ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]--------------------------------------------------------------------------------
+[21:44:12]Cluster Resources
+[21:44:12]--------------------------------------------------------------------------------
+[21:44:12]ora.LISTENER_SCAN1.lsnr
+[21:44:12]      1        ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]ora.cvu
+[21:44:12]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]ora.fmfapdb.db
+[21:44:12]      1        ONLINE  ONLINE       sxzcgldb103022           Open,Readonly       
+[21:44:12]      2        ONLINE  ONLINE       sxzcgldb103021           Open,Readonly       
+[21:44:12]ora.fmfapdb1.db
+[21:44:12]      1        OFFLINE OFFLINE                                                   
+[21:44:12]ora.oc4j
+[21:44:12]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]ora.scan1.vip
+[21:44:12]      1        ONLINE  ONLINE       sxzcgldb103022                               
+[21:44:12]ora.sxzcgldb103021.vip
+[21:44:12]      1        ONLINE  ONLINE       sxzcgldb103021                               
+[21:44:12]ora.sxzcgldb103022.vip
+[21:44:12]      1        ONLINE  ONLINE       sxzcgldb103022                               
+[21:46:12][grid@sxzcgldb103021 ~]$ timed out waiting for input: auto-logout
+[21:47:40][root@sxzcgldb103021 network-scripts]# su - oracle
+[21:47:40]Last login: Fri Jun 21 21:41:54 CST 2019 on pts/5
+[21:47:41][oracle@sxzcgldb103021 ~]$ export TMOUT=0
